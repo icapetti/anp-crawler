@@ -1,0 +1,113 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://example.com/example.json",
+    "type": "object",
+    "title": "The root schema",
+    "description": "The root schema comprises the entire JSON document.",
+    "default": {},
+    "examples": [
+        {
+            "município": "ITACOATIARA",
+            "estado": "AMAZONAS",
+            "combustível": "GASOLINA COMUM",
+            "nº de postos": 8,
+            "preço médio": 5.84,
+            "desvio padrão": 0.16,
+            "preço mínimo": 5.69,
+            "preço máximo": 5.99
+        }
+    ],
+    "required": [
+        "município",
+        "estado",
+        "combustível",
+        "nº de postos",
+        "preço médio",
+        "desvio padrão",
+        "preço mínimo",
+        "preço máximo"
+    ],
+    "properties": {
+        "município": {
+            "$id": "#/properties/munic%C3%ADpio",
+            "type": "string",
+            "title": "The município schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "ITACOATIARA"
+            ]
+        },
+        "estado": {
+            "$id": "#/properties/estado",
+            "type": "string",
+            "title": "The estado schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "AMAZONAS"
+            ]
+        },
+        "combustível": {
+            "$id": "#/properties/combust%C3%ADvel",
+            "type": "string",
+            "title": "The combustível schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "GASOLINA COMUM"
+            ]
+        },
+        "nº de postos": {
+            "$id": "#/properties/n%C2%BA%20de%20postos",
+            "type": "integer",
+            "title": "The nº de postos schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": 0,
+            "examples": [
+                8
+            ]
+        },
+        "preço médio": {
+            "$id": "#/properties/pre%C3%A7o%20m%C3%A9dio",
+            "type": "number",
+            "title": "The preço médio schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": 0.0,
+            "examples": [
+                5.84
+            ]
+        },
+        "desvio padrão": {
+            "$id": "#/properties/desvio%20padr%C3%A3o",
+            "type": "number",
+            "title": "The desvio padrão schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": 0.0,
+            "examples": [
+                0.16
+            ]
+        },
+        "preço mínimo": {
+            "$id": "#/properties/pre%C3%A7o%20m%C3%ADnimo",
+            "type": "number",
+            "title": "The preço mínimo schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": 0.0,
+            "examples": [
+                5.69
+            ]
+        },
+        "preço máximo": {
+            "$id": "#/properties/pre%C3%A7o%20m%C3%A1ximo",
+            "type": "number",
+            "title": "The preço máximo schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": 0.0,
+            "examples": [
+                5.99
+            ]
+        }
+    },
+    "additionalProperties": true
+}

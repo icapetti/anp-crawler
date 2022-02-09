@@ -1,0 +1,17 @@
+[Unit]
+Description=Crawler Server - Scrapyd
+After=network.target
+
+[Service]
+User=admin
+Group=admin
+WorkingDirectory=/home/admin/anp-crawler
+Environment="PATH=/home/admin/.miniconda3/envs/default-crawlers/bin:/home/admin/.miniconda3/condabin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games"
+ExecStart=/home/admin/.miniconda3/envs/default-crawlers/bin/scrapyd
+StandardOutput=append:/var/log/scrapyd/access.log
+StandardError=append:/var/log/scrapyd/error.log
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+
+[Install]
+WantedBy=multi-user.target

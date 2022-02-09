@@ -1,0 +1,36 @@
+# Use the latest 2.1 version of CircleCI pipeline process engine.
+# See: https://circleci.com/docs/2.0/configuration-reference
+version: 2.1
+
+orbs:
+  shellcheck: circleci/shellcheck@2.2.4
+
+jobs:
+  anp-crawler-deploy:
+    circleci_ip_ranges: true
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - $SSH_FINGERPRINT
+      - checkout
+      - run:
+          name: AWS EC2 Crawler deploy
+          command: |
+            my_env=$environment
+            ssh -o StrictHostKeyChecking=no -t -t $SSH_USER@$SSH_HOST \
+            'echo "Updating local repository..." && \
+            cd /home/admin/anp-crawler && git pull origin main && \
+            cd && echo "Local repository updated! Executing deploy script..." && \
+            . /home/admin/anp-crawler/.deploy/deploy.sh
+            exit'
+
+# Invoke jobs via workflows
+workflows:
+  build-and-deploy:
+     jobs:
+       - anp-crawler-deploy:
+           filters:
+             branches:
+               only: main # only deploy on the main branch
