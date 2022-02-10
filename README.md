@@ -1,11 +1,14 @@
 # ANP
 ## The project
-The Agência Nacional do Petróleo, Gás Natural e Biocombustíveis is the regulatory body for activities that make up the oil and natural gas and biofuels industries in Brazil. The ANP is responsible for the Levantamento de Preços de Combustíveis (LPC), which is the most comprehensive survey of automotive fuel and LPG prices in Brazil, which provides references for the market, government agencies and civil society in general.[Read more](https://www.gov.br/anp/pt-br/assuntos/precos-e-defesa-da-concorrencia/precos/precos-revenda-e-de-distribuicao-combustiveis/levantamento-de-precos-de-combustiveis)
+The Agência Nacional do Petróleo, Gás Natural e Biocombustíveis is the regulatory body for activities that make up the oil and natural gas and biofuels industries in Brazil. The ANP is responsible for the Levantamento de Preços de Combustíveis (LPC), which is the most comprehensive survey of automotive fuel and LPG prices in Brazil, which provides references for the market, government agencies and civil society in general. [Read more](https://www.gov.br/anp/pt-br/assuntos/precos-e-defesa-da-concorrencia/precos/precos-revenda-e-de-distribuicao-combustiveis/levantamento-de-precos-de-combustiveis)
+
+![anp-site](./docs/img/anp_site.png)
 
 This project extracts fuel data from ANP website and loads as jl.gz format on AWS s3.
 
 ## Architecture
 
+![project](/docs/img/anp_crawler_project.png)
 
 ## Resources
 This project currently uses:
@@ -14,24 +17,24 @@ This project currently uses:
 - Spidermon 1.16.2
 
 ## Pipeline
-Aqui o item extraído pelo crawler passa por uma camada de padronização como uppercase, strip, conversão de tipos e etc.
-Não há validação dos dados aqui, apenas algumas pequenas padronizações.
+Here the item extracted by the crawler goes through a standardization layer such as uppercase, strip, type conversion and so on. There is no validation of the data here, just some minor standardizations.
 
 ## Crawler Data validation
-Validação dos dados gerados usando json-schema.
-Aqui está um gerador de schema baseado numa amostra dos dados "ideais": [jsonschema.net](https://www.jsonschema.net/home)
+Validation of generated data using json-schema.
+Here is a schema generator based on a sample of the ideal data: [jsonschema.net](https://www.jsonschema.net/home)
 
-O schema do gerador é básico, para informar campos obrigatórios e tipos. Com essa base gerada é possível fazer diversas outras validações utilizando até mesmo regex para validar uma url ou formato de cep, por exemplo.
+The generator schema is basic, to inform mandatory fields and types. With this generated base it is possible to do several other validations using even regex to validate a url or zip code format, for example.
 
-Pra ativar o validador é necessário:
-1. Salvar o schema gerado numa pasta do repositório
-2. Informar no `settings.py` o path do schema:
+To activate the validator it is necessary:
+1. Save the generated schema in a repository folder
+2. Inform the schema path in `settings.py`:
 ```python
 SPIDERMON_VALIDATION_SCHEMAS = [
     '../anp_crawler/schemas/anp_default_schema.json',
 ]
 ```
-3. Ativar o pipeline de validação no `settings.py`
+
+3. Enable validation pipeline in `settings.py`
 ```python
 ITEM_PIPELINES = {
     'anp_crawler.pipelines.AnpCrawlerPipeline': 300,
@@ -40,16 +43,24 @@ ITEM_PIPELINES = {
 ```
 
 ## Crawler monitoring
-Foram implementados dois tipos de monitoramento:
-- Durante a execução da spider:
+Two types of monitoring were implemented:
+1. During spider execution:
+- Unwanted http status number cannot be greater than success status number
+- The amount of items extracted after 15 minutes of running must be greater than zero
 
+If monitoring fails on one of the monitors, an action is taken: the spider is terminated and an alert is sent to Slack.
 
-- No encerramento da spider:
-
+2. At the end of the spider:
+- ItemCountMonitor: the amount of extracted items must be greater than or equal to the defined minimum
+- ErrorCountMonitor: the amount of errors must not be greater than the defined
+- FinishReasonMonitor: the spider shutdown reason must be among the allowed reasons
+- UnwantedHTTPCodesMonitor: the amount of unwanted http status should not be more than the threshold
+- ItemValidationMonitor: the number of items extracted with errors in data validation cannot be greater than the limit
+- HistoryMonitor: the amount of items extracted must reach the minimum defined based on the previous execution history
 
 ## Scrapy deployment
 ### Scrapyd
-Scrapyd is a service for running Scrapy spiders. It allows you to deploy your Scrapy projects and control their spiders using an HTTP JSON API. Created by the same developers that developed Scrapy itself, Scrapyd is a tool for running Scrapy spiders in production on remote servers so you don't need to run them on a local machine.
+Scrapyd is a service for running Scrapy spiders. It allows you to deploy your Scrapy projects and control their spiders using an HTTP JSON API. It is a tool for running Scrapy spiders in production on remote servers so you don't need to run them on a local machine.
 
 Scrapyd helps manage multiple Scrapy projects and each project can have multiple versions uploaded, but only the latest one will be used for launching new spiders. 
 
@@ -60,29 +71,41 @@ Scrapyd is an application (typically run as a daemon) that listens to requests f
 
 To start a spider with `Scrapyd`
 ```
-curl http://52.204.150.228:6800/schedule.json \
--d project=anp_crawler \
--d spider=anp
-
-curl http://localhost:6800/schedule.json \
+curl http://<YOUR-EC2-INSTANCE>:6800/schedule.json \
 -d project=anp_crawler \
 -d spider=anp
 ```
 
-### Scrapyd-client
+## CI/CD
+This project uses `Circle CI` to manage the deployment of the Github repository to an EC2 instance on AWS.
+- [Circle CI config](.circleci/config.yml)
+- [Deploy script](.deploy/deploy.sh)
 
-Add your ec2 instane to `scrapy.cfg`:
-
-[deploy:aws_target]
-url = http://localhost:6800/
-project = anp_crawler
+![circle-ci](./docs/img/circle_ci_deploy.png)
 
 ## To run this project in your machine
-- Create an `.env` file  on `/home/$USER/.credentials/.env` and add your AWS credentials:
+1. Create an `.env` file  on `/home/$USER/.credentials/.env` and add your AWS credentials:
 ```python
-aws_id = "YOUR-ID-HERE"
-aws_secret = "YOUR-SECRET-HERE"
+aws_id = "<YOUR-ID-HERE>"
+aws_secret = "<YOUR-SECRET-HERE>"
+slack_alert_token = "<YOUR-SLACK-TOKEN>"
 ```
 
-- Add your URI on `anp.py` file:
+2. Add your URI on `anp.py` file:
 `BASE_URI = f's3://da-vinci-raw/crawler-various/anp/run={DATE}/'`
+
+3. Create a python 3.9 environment with miniconda and activate it
+- `wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh`
+- `chmod +x Miniconda3-latest-Linux-x86_64.sh`
+- `./Miniconda3-latest-Linux-x86_64.sh`
+- `export PATH="/home/$USER/.miniconda3/bin:$PATH"`
+- `source ~/.bashrc`
+- `rm Miniconda3-latest-Linux-x86_64.sh`
+- `conda create -n crawler python=3.9`
+- `conda activate crawler`
+
+4. Install requirements
+- `pip install -r requirements.txt`
+
+5. Run spider
+- `scrapy crawl anp`

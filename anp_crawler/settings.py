@@ -52,6 +52,10 @@ SPIDERMON_VALIDATION_SCHEMAS = [
     './anp_crawler/schemas/anp_default_schema.json',
 ]
 
+SPIDERMON_PERIODIC_MONITORS = {
+    'anp_crawler.monitors.PeriodicMonitorSuite': 900,  # time in seconds
+}
+
 SPIDERMON_SPIDER_CLOSE_MONITORS = {
     'anp_crawler.monitors.SpiderCloseMonitorSuite',
 }

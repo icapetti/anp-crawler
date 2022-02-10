@@ -70,7 +70,7 @@ class SpiderCloseMonitorSuite(MonitorSuite):
 @monitors.name('Periodic job stats monitor')
 class PeriodicJobStatsMonitor(Monitor, StatsMonitorMixin):
 
-    @monitors.name('Mode unwanted http code than success')
+    @monitors.name('Should not have more unwanted http code than success')
     def test_number_of_unwanted_http_status(self):
         success_http_codes = self.data.stats.get('downloader/response_status_count/200', 0)
         unwanted_http_codes = self.data.stats.get('downloader/response_status_count/429', 0)
@@ -78,7 +78,7 @@ class PeriodicJobStatsMonitor(Monitor, StatsMonitorMixin):
         msg = 'The job has more http unwated 429 code than success 200 code.'
         self.assertLessEqual(unwanted_http_codes, success_http_codes, msg=msg)
 
-    @monitors.name('Maximum time elapsed without extract itens')
+    @monitors.name('Number of items extracted should be greater than 1 after 15 minutes of running')
     def test_number_items_extracted(self):
         no_items_count = 1
         items_count = self.data.stats.get('item_scraped_count', 0)
