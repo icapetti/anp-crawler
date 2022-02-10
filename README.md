@@ -43,6 +43,13 @@ ITEM_PIPELINES = {
 ```
 
 ## Crawler monitoring
+Some monitors were implemented to identify problems with the crawler over time, such as unwanted https status, drop in the amount of extracted items, as well as problems in the quality of the extracted data.
+
+If an issue is identified, an alert is sent to a Slack channel.
+
+![slack-alert](./docs/img/slack_alerts.png)
+
+### Details of monitoring
 Two types of monitoring were implemented:
 1. During spider execution:
 - Unwanted http status number cannot be greater than success status number
