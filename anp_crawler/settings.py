@@ -7,8 +7,7 @@ from dotenv import load_dotenv
 
 # Loads variables on the .env file to the local environment variables
 # Add your aws credentials on the .env file
-user = os.environ.get("USER") if os.environ.get("USER") else os.environ.get("USERNAME")
-load_dotenv(f'/home/{user}/.credentials/.env')
+load_dotenv()
 
 BOT_NAME = 'anp_crawler'
 
@@ -20,8 +19,8 @@ LOG_ENABLED = True
 LOG_LEVEL = 'INFO'
 
 # CREDENTIALS FOR S3
-AWS_ACCESS_KEY_ID = os.getenv("aws_id")
-AWS_SECRET_ACCESS_KEY = os.getenv("aws_secret")
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
@@ -67,7 +66,7 @@ SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT = 10
 SPIDERMON_UNWANTED_HTTP_CODES = [400, 407, 429, 500, 502, 503, 504, 523, 540, 541]
 SPIDERMON_MAX_ITEM_VALIDATION_ERRORS = 0
 
-SPIDERMON_SLACK_SENDER_TOKEN = os.getenv("slack_alert_token")
+SPIDERMON_SLACK_SENDER_TOKEN = os.getenv("SLACK_TOKEN")
 SPIDERMON_SLACK_SENDER_NAME = 'Spidermon Monitoring'
 SPIDERMON_SLACK_RECIPIENTS = ['C02U54LHZ61',]
 

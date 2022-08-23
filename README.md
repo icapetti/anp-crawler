@@ -2,19 +2,19 @@
 ## The project
 The Agência Nacional do Petróleo, Gás Natural e Biocombustíveis is the regulatory body for activities that make up the oil and natural gas and biofuels industries in Brazil. The ANP is responsible for the Levantamento de Preços de Combustíveis (LPC), which is the most comprehensive survey of automotive fuel and LPG prices in Brazil, which provides references for the market, government agencies and civil society in general. [Read more](https://www.gov.br/anp/pt-br/assuntos/precos-e-defesa-da-concorrencia/precos/precos-revenda-e-de-distribuicao-combustiveis/levantamento-de-precos-de-combustiveis)
 
-![anp-site](./docs/img/anp_site.png)
+![anp-site](./.docs/img/anp_site.png)
 
 This project extracts fuel data from ANP website and loads as jl.gz format on AWS s3.
 
 ## Architecture
 
-![project](/docs/img/anp_crawler_project.png)
+![project](/.docs/img/anp_crawler_project.png)
 
 ## Resources
 This project currently uses:
 - Python 3.9
-- Scrapy 2.5.1
-- Spidermon 1.16.2
+- Scrapy 2.5.1 ATUALIZAR
+- Spidermon 1.16.2 ATUALIZAR
 
 ## Pipeline
 Here the item extracted by the crawler goes through a standardization layer such as uppercase, strip, type conversion and so on. There is no validation of the data here, just some minor standardizations.
@@ -47,7 +47,7 @@ Some monitors were implemented to identify problems with the crawler over time, 
 
 If an issue is identified, an alert is sent to a Slack channel.
 
-![slack-alert](./docs/img/slack_alerts.png)
+![slack-alert](./.docs/img/slack_alerts.png)
 
 ### Details of monitoring
 Two types of monitoring were implemented:
@@ -88,10 +88,10 @@ This project uses `Circle CI` to manage the deployment of the Github repository 
 - [Circle CI config](.circleci/config.yml)
 - [Deploy script](.deploy/deploy.sh)
 
-![circle-ci](./docs/img/circle_ci_deploy.png)
+![circle-ci](./.docs/img/circle_ci_deploy.png)
 
 ## To run this project in your machine
-1. Create an `.env` file  on `/home/$USER/.credentials/.env` and add your AWS credentials:
+1. Create an `.env` file and add AWS and Slack credentials:
 ```python
 aws_id = "<YOUR-ID-HERE>"
 aws_secret = "<YOUR-SECRET-HERE>"
@@ -99,20 +99,11 @@ slack_alert_token = "<YOUR-SLACK-TOKEN>"
 ```
 
 2. Add your URI on `anp.py` file:
+ADICIONAR ISTO NO ENV
 `BASE_URI = f's3://da-vinci-raw/crawler-various/anp/run={DATE}/'`
 
-3. Create a python 3.9 environment with miniconda and activate it
-- `wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh`
-- `chmod +x Miniconda3-latest-Linux-x86_64.sh`
-- `./Miniconda3-latest-Linux-x86_64.sh`
-- `export PATH="/home/$USER/.miniconda3/bin:$PATH"`
-- `source ~/.bashrc`
-- `rm Miniconda3-latest-Linux-x86_64.sh`
-- `conda create -n crawler python=3.9`
-- `conda activate crawler`
+Docker
+docker build -t anp-crawler .
+docker run anp-crawler
 
-4. Install requirements
-- `pip install -r requirements.txt`
-
-5. Run spider
-- `scrapy crawl anp`
+Adicionar makefile
