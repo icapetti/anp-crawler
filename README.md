@@ -105,5 +105,3 @@ ADICIONAR ISTO NO ENV
 Docker
 docker build -t anp-crawler .
 docker run anp-crawler
-
-Adicionar makefile

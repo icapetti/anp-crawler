@@ -14,6 +14,7 @@ COPY . .
 
 # Install requirements.txt
 RUN pip3 install -r requirements.txt
- 
-# Run the crawler when the container launches
-CMD ["python3", "./trigger_anp_crawler.py"]
+
+RUN chmod +x ./trigger_anp_crawler.sh
+ENTRYPOINT ["./trigger_anp_crawler.sh"]
+CMD ["local"]

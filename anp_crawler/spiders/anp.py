@@ -25,15 +25,15 @@ class AnpSpider(scrapy.Spider):
     name = 'anp'
     allowed_domains = ['preco.anp.gov.br']
     start_urls = ['https://preco.anp.gov.br/include/Resumo_Mensal_Index.asp']
-    custom_settings = {
-        'FEEDS': {
-            f'{BASE_URI}%(batch_id)d-{name}-%(batch_time)s.jl.gz': {
-                'format': 'jl.gz',
-                'encoding': 'utf8',
-                'store_empty': False,
-            }
-        },
-    }
+    # custom_settings = {
+    #     'FEEDS': {
+    #         f'{BASE_URI}%(batch_id)d-{name}-%(batch_time)s.jl.gz': {
+    #             'format': 'jl.gz',
+    #             'encoding': 'utf8',
+    #             'store_empty': False,
+    #         }
+    #     },
+    # }
 
     def parse(self, response):
         headers =  {

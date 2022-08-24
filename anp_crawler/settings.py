@@ -2,6 +2,7 @@
 
 import os
 from random import choice
+from datetime import date
 
 from dotenv import load_dotenv
 
@@ -21,6 +22,9 @@ LOG_LEVEL = 'INFO'
 # CREDENTIALS FOR S3
 AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+
+DATE = date.today()
+BASE_URI = f's3://da-vinci-raw/crawler-various/anp/run={DATE}/'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
@@ -85,6 +89,14 @@ FEED_EXPORTERS = {
 }
 FEED_EXPORT_ENCODING = 'utf-8'
 FEED_EXPORT_BATCH_ITEM_COUNT = 10000
+
+FEEDS = {
+    f'{BASE_URI}%(batch_id)d-TESTE-%(batch_time)s.jl.gz': {
+        'format': 'jl.gz',
+        'encoding': 'utf8',
+        'store_empty': False,
+    }
+}
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 USER_AGENT = choice([
