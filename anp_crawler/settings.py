@@ -2,13 +2,13 @@
 
 import os
 from random import choice
+from datetime import date
 
 from dotenv import load_dotenv
 
 # Loads variables on the .env file to the local environment variables
 # Add your aws credentials on the .env file
-user = os.environ.get("USER") if os.environ.get("USER") else os.environ.get("USERNAME")
-load_dotenv(f'/home/{user}/.credentials/.env')
+load_dotenv()
 
 BOT_NAME = 'anp_crawler'
 
@@ -20,8 +20,11 @@ LOG_ENABLED = True
 LOG_LEVEL = 'INFO'
 
 # CREDENTIALS FOR S3
-AWS_ACCESS_KEY_ID = os.getenv("aws_id")
-AWS_SECRET_ACCESS_KEY = os.getenv("aws_secret")
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+
+DATE = date.today()
+BASE_URI = f's3://da-vinci-raw/crawler-various/anp/run={DATE}/'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
@@ -67,7 +70,7 @@ SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT = 10
 SPIDERMON_UNWANTED_HTTP_CODES = [400, 407, 429, 500, 502, 503, 504, 523, 540, 541]
 SPIDERMON_MAX_ITEM_VALIDATION_ERRORS = 0
 
-SPIDERMON_SLACK_SENDER_TOKEN = os.getenv("slack_alert_token")
+SPIDERMON_SLACK_SENDER_TOKEN = os.getenv("SLACK_TOKEN")
 SPIDERMON_SLACK_SENDER_NAME = 'Spidermon Monitoring'
 SPIDERMON_SLACK_RECIPIENTS = ['C02U54LHZ61',]
 
@@ -86,6 +89,14 @@ FEED_EXPORTERS = {
 }
 FEED_EXPORT_ENCODING = 'utf-8'
 FEED_EXPORT_BATCH_ITEM_COUNT = 10000
+
+FEEDS = {
+    f'{BASE_URI}%(batch_id)d-TESTE-%(batch_time)s.jl.gz': {
+        'format': 'jl.gz',
+        'encoding': 'utf8',
+        'store_empty': False,
+    }
+}
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 USER_AGENT = choice([
